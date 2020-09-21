@@ -2,4 +2,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/rere6612/public_html/
-    - /bin/cp index.html $DEPLOYPATH
+    - /bin/ln -s php/public $DEPLOYPATH/api
