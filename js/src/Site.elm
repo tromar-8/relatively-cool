@@ -61,7 +61,7 @@ update msg model = let mi = model.input in
 init : (Model, Cmd Msg)
 init = (Model newResponse newResponse, getInfo)
 
-newResponse = Response "Loading" "" "" ""
+newResponse = Response "" "" "" ""
 
 viewSiteEdit model = Html.form [class "container box", onSubmit SetInfo]
                              [ div [class "field"]

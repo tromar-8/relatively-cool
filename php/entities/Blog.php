@@ -18,7 +18,7 @@ class Blog implements JsonSerializable
      */
     protected $id;
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text")
      */
     protected $content;
     /**

@@ -6,6 +6,7 @@ import Html.Events exposing (..)
 import Http
 import Json.Decode as D
 import Json.Encode as E
+import Markdown
 
 import Auth exposing (Auth(..))
 import Util
@@ -96,9 +97,8 @@ viewBlogs model auth = div [class "container"]
                        ]
 
 viewPost : Auth.Auth -> Post -> Html Msg
-viewPost auth post = div [class "container column is-10 box"]
-                      [ text post.content
-                      , br [] []
+viewPost auth post = div [class "container column is-10 box content"]
+                      [ Markdown.toHtml [] post.content
                       , span [class "tag is-dark"] [text post.author], span [class "tag is-gray"] [text <| String.left 10 post.date]
                       , div [class "buttons is-centered"]
                           (case auth of
@@ -135,12 +135,11 @@ editPost post = div [class "level"]
                       [ Html.form [class "container box", onSubmit SetPost]
                             [ div [class "field"]
                                 [ label [class "label"] [text "Post content:"]
-                                , div [class "control"] [ input [ class "input"
-                                                                , type_ "text"
-                                                                , placeholder "markdown"
-                                                                , onInput ContentInput
-                                                                , value post.content
-                                                                ] []
+                                , div [class "control"] [ textarea [ class "textarea"
+                                                                   , placeholder "markdown"
+                                                                   , onInput ContentInput
+                                                                   , value post.content
+                                                                   ] []
                                                         ]
                                 ]
                             , button [class "button is-primary"] [text "Submit"]

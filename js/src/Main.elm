@@ -29,12 +29,12 @@ type Page
     | Blog Blog.Model
     | NotFound
 
-type alias Model =
-    { key : Nav.Key
-    , page : Page
-    , authModel : Auth.Model
-    , site : Site.Response
-    }
+type alias Model = { key : Nav.Key
+                   , page : Page
+                   , authModel : Auth.Model
+                   , site : Site.Response
+                   , loading : Bool
+                   }
 
 main : Program () Model Msg
 main = Browser.application
@@ -51,6 +51,7 @@ init _ url key = ({ key = key
                   , page = NotFound
                   , authModel = Auth.newModel
                   , site = Site.newResponse
+                  , loading = True
                   }
                  , Cmd.batch
                       [ Cmd.map AuthMsg Auth.checkAuth
@@ -92,7 +93,7 @@ update msg model = case msg of
                        SiteMsg site -> case model.page of
                                            SiteEdit sm -> Site.update site sm |> \(siteModel, siteMsg) -> ({ model | site = siteModel.input
                                                                                                            , page = SiteEdit siteModel }, Cmd.map SiteMsg siteMsg)
-                                           _ -> Site.update site (Site.build model.site) |> \(siteModel, siteMsg) -> ({ model | site = siteModel.input }, Cmd.map SiteMsg siteMsg)
+                                           _ -> Site.update site (Site.build model.site) |> \(siteModel, siteMsg) -> ({ model | site = siteModel.input, loading = False }, Cmd.map SiteMsg siteMsg)
                        ProjectMsg project -> case model.page of
                                                  Project pm -> Project.update project pm |> \(projectModel, projectMsg) -> ({ model | page = Project projectModel }, Cmd.map ProjectMsg projectMsg)
                                                  _ -> (model, Cmd.none)
