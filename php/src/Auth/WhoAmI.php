@@ -16,14 +16,14 @@ class WhoAmI implements RequestHandlerInterface
     {
         $session = $request->getAttribute('session');
         $user = $session->get(UserInterface::class);
-        if($user && !in_array('guest', $user['roles'])) {
+        if($user) {
             return new JsonResponse([
                 'success' => true,
-                'name' => $user['username'],
-                'admin' => in_array('admin', $user['roles']),
+                'username' => in_array('guest', $user['roles']) ? null : $user['username'],
+                'roles' => $user['roles'],
             ]);
         }
-        $response = ['success' => false];
+        $response = ['roles' => []];
         if($error = $request->getAttribute('error')) $response['error'] = $error;
         return new JsonResponse($response);
     }

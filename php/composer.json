@@ -67,7 +67,8 @@
         "psr-4": {
             "App\\": "src/App/",
             "Auth\\": "src/Auth/",
-            "Entity\\": "entities/"
+            "Entity\\": "entities/",
+            "Layout\\": "src/Layout/src/"
         }
     },
     "autoload-dev": {

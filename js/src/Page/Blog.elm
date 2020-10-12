@@ -1,4 +1,4 @@
-module Page.Blog exposing (..)
+module Page.Blog exposing (Model, Msg, init, view, update)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -8,7 +8,7 @@ import Json.Decode as D
 import Json.Encode as E
 import Markdown
 
-import Auth exposing (Auth(..))
+import Auth
 import Util
 
 type alias Model =
@@ -80,39 +80,40 @@ decodePosts = D.list <| D.map4 Post
               (D.field "content" D.string)
 
 
-viewBlogs : Model -> Auth.Auth -> Html Msg
-viewBlogs model auth = div [class "container"]
-                       [ div [class "columns is-multiline"] (List.map (viewPost auth) model.posts)
-                       , case auth of
-                             Guest -> div [] []
-                             _ -> div [class "container"]
-                                  [ div [class "level"]
-                                        [ div [ class "level-item has-text-centered" ]
-                                              [ button [class "button is-primary", onClick <| SetTarget <| Just (0, Edit)] [text "New Post"]
-                                              ]
-                                        ]
-                                  ]
-                       , Maybe.withDefault (div [] [])
-                           <| Maybe.map (viewAction auth) model.target
-                       ]
+view : Model -> Auth.Model -> Html Msg
+view model auth =
+    div [class "container"]
+        [ div [class "columns is-multiline"] (List.map (viewPost auth) model.posts)
+        , case auth of
+              Auth.User _ roles -> div [class "container"]
+                   [ div [class "level"]
+                         [ div [ class "level-item has-text-centered" ]
+                               [ button [class "button is-primary", onClick <| SetTarget <| Just (0, Edit)] [text "New Post"]
+                               ]
+                         ]
+                   ]
+              _ -> div [] []
+        , Maybe.withDefault (div [] [])
+            <| Maybe.map (viewAction auth) model.target
+        ]
 
-viewPost : Auth.Auth -> Post -> Html Msg
+viewPost : Auth.Model -> Post -> Html Msg
 viewPost auth post = div [class "container column is-10 box content"]
                       [ Markdown.toHtml [] post.content
                       , span [class "tag is-dark"] [text post.author], span [class "tag is-gray"] [text <| String.left 10 post.date]
                       , div [class "buttons is-centered"]
                           (case auth of
-                               Admin _ -> [ button [class "button"
-                                                   , onClick <| SetTarget <| Just (post.id, Edit)
-                                                   ] [text "Edit"]
-                                          , button [class "button is-danger"
-                                                   , onClick <| SetTarget <| Just (post.id, Delete)
-                                                   ] [text "Delete"]
-                                          ]
+                               Auth.User name roles -> [ button [class "button"
+                                                           , onClick <| SetTarget <| Just (post.id, Edit)
+                                                           ] [text "Edit"]
+                                                  , button [class "button is-danger"
+                                                           , onClick <| SetTarget <| Just (post.id, Delete)
+                                                           ] [text "Delete"]
+                                                  ]
                                _ -> [])
                       ]
 
-viewAction : Auth.Auth -> (Post, Action) -> Html Msg
+viewAction : Auth.Model -> (Post, Action) -> Html Msg
 viewAction auth (post, action) = div [class "modal is-active"]
                           [ div [class "modal-background", onClick <| SetTarget Nothing ] []
                           , div [ class "modal-content"]

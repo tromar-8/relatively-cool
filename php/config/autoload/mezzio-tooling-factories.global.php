@@ -15,8 +15,10 @@ return [
         'factories' => [
             App\Blog::class => App\BlogFactory::class,
             App\Home::class => App\HomeFactory::class,
+            App\LayoutBase::class => App\LayoutBaseFactory::class,
             App\OrmMiddleware::class => App\OrmMiddlewareFactory::class,
             App\Project::class => App\ProjectFactory::class,
+            App\ShowCase::class => App\ShowCaseFactory::class,
             App\SiteInfo::class => App\SiteInfoFactory::class,
             Auth\Denied::class => Auth\DeniedFactory::class,
             Auth\Login::class => Auth\LoginFactory::class,
@@ -25,6 +27,11 @@ return [
             Auth\OrmAccess::class => Auth\OrmAccessFactory::class,
             Auth\Register::class => Auth\RegisterFactory::class,
             Auth\WhoAmI::class => Auth\WhoAmIFactory::class,
+            Layout\Footer::class => Layout\FooterFactory::class,
+            Layout\Info::class => Layout\InfoFactory::class,
+            Layout\LinkItem::class => Layout\LinkItemFactory::class,
+            Layout\Nav::class => Layout\NavFactory::class,
+            Layout\NavItem::class => Layout\NavItemFactory::class,
         ],
     ],
 ];

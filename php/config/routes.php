@@ -34,14 +34,20 @@ use Psr\Container\ContainerInterface;
  */
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container) : void {
     $app->get('/', App\Home::class, 'home');
-    $app->get('/info', App\SiteInfo::class, 'info.get');
-    $app->post('/info', App\SiteInfo::class, 'info.set');
-    $app->get('/project', App\Project::class, 'project.get');
-    $app->post('/project', App\Project::class, 'project.set');
-    $app->post('/project/delete', App\Project::class, 'project.delete');
+    $app->get('/showcase', App\ShowCase::class, 'showcase.get');
+    $app->post('/showcase', App\ShowCase::class, 'showcase.set');
+    $app->post('/showcase/delete', App\ShowCase::class, 'showcase.delete');
     $app->get('/blog', App\Blog::class, 'blog.get');
     $app->post('/blog', App\Blog::class, 'blog.set');
     $app->post('/blog/delete', App\Blog::class, 'blog.delete');
+    $app->get('/info', Layout\Info::class, 'info.get');
+    $app->post('/info', Layout\Info::class, 'info.set');
+    $app->get('/footer', Layout\Footer::class, 'footer.get');
+    $app->post('/footer', Layout\Footer::class, 'footer.set');
+    $app->post('/footer/delete', Layout\Footer::class, 'footer.delete');
+    $app->get('/nav', Layout\Nav::class, 'nav.get');
+    $app->post('/nav', Layout\Nav::class, 'nav.set');
+    $app->post('/nav/delete', Layout\Nav::class, 'nav.delete');
     $app->post('/login', [Auth\Login::class, Auth\WhoAmI::class], 'login');
     $app->get('/logout', Auth\Logout::class, 'logout');
     $app->post('/register', [Auth\Register::class, Auth\Login::class, Auth\WhoAmI::class], 'register');

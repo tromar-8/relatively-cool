@@ -9,37 +9,38 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Mezzio\Router\RouteResult;
+use Mezzio\Authentication\UserInterface;
 use Doctrine\ORM\EntityManager;
 
-use Entity\Project as ProjectEntity;
+use Entity\ShowCase as ShowCaseEntity;
 
-class Project implements RequestHandlerInterface
+class ShowCase implements RequestHandlerInterface
 {
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
         $orm = $request->getAttribute(EntityManager::class);
         $routeName = $request->getAttribute(RouteResult::class)->getMatchedRouteName();
-        $projectRepo = $orm->getRepository('Entity\Project');
+        $repo = $orm->getRepository('Entity\ShowCase');
         $success = false;
         switch($routeName) {
-        case "project.get":
-            $projects = $projectRepo->findAll();
-            return new JsonResponse($projects);
-        case "project.set":
+        case "showcase.get":
+            return new JsonResponse($repo->findAll());
+        case "showcase.set":
             $pe = $request->getParsedBody();
-            if($project = $projectRepo->findOneBy(['id' => $pe['id']])) {
-                $project->setInfo($pe);
+            $pe['date'] = new \DateTime();
+            if($item = $repo->findOneBy(['id' => $pe['id']])) {
+                $item->setInfo($pe);
             } else {
-                $project = new ProjectEntity($request->getParsedBody());
+                $item = new ShowCaseEntity($pe);
             }
-            $orm->persist($project);
+            $orm->persist($item);
             $orm->flush();
             $success = true;
             break;
-        case "project.delete":
+        case "showcase.delete":
             $pe = $request->getParsedBody();
-            if($project = $projectRepo->findOneBy($pe)) {
-                $orm->remove($project);
+            if($item = $repo->findOneBy($pe)) {
+                $orm->remove($item);
                 $orm->flush();
                 $success = true;
             }

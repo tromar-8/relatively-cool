@@ -4,29 +4,35 @@ return [
     'mezzio-authorization-rbac' => [
         'roles' => [
             'admin' => [],
-            'user'        => ['admin'],
-            'guest'   => ['user'],
+            'user' => ['admin'],
+            'guest' => ['user'],
         ],
         'permissions' => [
             'guest' => [
                 'denied',
                 'info.get',
-                'project.get',
+                'showcase.get',
+                'blog.get',
+                'nav.get',
+                'footer.get',
                 'whoami',
                 'login',
                 'register',
-                'blog.get',
             ],
             'user' => [
                 'logout',
                 'blog.set',
-            ],
-            'admin' => [
-                'info.set',
-                'project.set',
-                'project.delete',
                 'blog.delete',
             ],
+            'admin' => [
+                'showcase.set',
+                'showcase.delete',
+                'info.set',
+                'footer.set',
+                'footer.delete',
+                'nav.set',
+                'nav.delete',
+            ],
         ],
-    ]
+    ],
 ];

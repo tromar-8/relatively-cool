@@ -9,7 +9,7 @@ use JsonSerializable;
  * @ORM\Entity
  * @ORM\Table(name="project")
  */
-class Project implements JsonSerializable
+class ShowCase implements JsonSerializable
 {
     /**
      * @ORM\Id

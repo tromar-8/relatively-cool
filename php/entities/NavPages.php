@@ -6,9 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="site_info")
+ * @ORM\Table(name="nav_items")
  */
-class Info
+class NavPages
 {
     /**
      * @ORM\Id
@@ -19,11 +19,11 @@ class Info
     /**
      * @ORM\Column(type="string")
      */
-    protected $title;
+    protected $text;
     /**
      * @ORM\Column(type="string")
      */
-    protected $email;
+    protected $url;
 
     public function __construct($array) {
         setInfo($array);
@@ -31,13 +31,16 @@ class Info
 
     public function toArray() {
         return [
-            'title' => $this->title,
-            'email' => $this->email
+            'text' => $this->text,
+            'url' => $this->url
         ];
     }
 
-    public function setInfo($array) {
-        $this->title = $array['title'];
-        $this->email = $array['email'];
+    public function setTitle($string) {
+        $this->title = $string;
+    }
+
+    public function setUrl($string) {
+        $this->url = $string;
     }
 }
