@@ -3,12 +3,13 @@
 namespace Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="nav_items")
  */
-class NavPages
+class NavPages implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -26,10 +27,11 @@ class NavPages
     protected $url;
 
     public function __construct($array) {
-        setInfo($array);
+        setTitle($array['text']);
+        setUrl($array['url']);
     }
 
-    public function toArray() {
+    public function jsonSerialize() {
         return [
             'text' => $this->text,
             'url' => $this->url

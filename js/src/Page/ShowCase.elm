@@ -7,6 +7,7 @@ import Json.Decode as D
 import Json.Encode as E
 import Http
 import Task
+import Markdown
 
 import Util
 import Auth
@@ -110,7 +111,7 @@ view wModel auth = case wModel of
 viewProject auth project = div [class "hero section"]
                            [ div [class "hero-body box"]
                                  [ h1 [class "title"] [a [href project.url] [text project.name]]
-                                 , p [class "subtitle"] [text project.description]
+                                 , p [class "subtitle"] [Markdown.toHtml [class "content"] project.description]
                                  , div [class "buttons"]
                                      <| a [class "button is-primary", href project.url] [text "Visit"] ::
                                  ( if Auth.isAdmin auth
@@ -165,12 +166,11 @@ editProject project = div [class "level"]
                                         ]
                                   , div [class "field"]
                                         [ label [class "label"] [text "Site Description:"]
-                                        , div [class "control"] [ input [ class "input"
-                                                                        , type_ "text"
-                                                                        , placeholder "description"
-                                                                        , onInput DescriptionInput
-                                                                        , value project.description
-                                                                        ] []
+                                        , div [class "control"] [ textarea [ class "textarea"
+                                                                           , placeholder "description"
+                                                                           , onInput DescriptionInput
+                                                                           , value project.description
+                                                                           ] []
                                                                 ]
                                         ]
                                   , button [class "button is-primary"] [text "Submit"]
