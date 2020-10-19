@@ -11,7 +11,6 @@ import Auth
 import Layout
 import Page.ShowCase as ShowCase
 import Page.Blog as Blog
-import Page.Chat as Chat
 import Page.Settings as Settings
 
 type Msg
@@ -21,13 +20,11 @@ type Msg
     | LayoutMsg Layout.Msg
     | ShowCaseMsg ShowCase.Msg
     | BlogMsg Blog.Msg
-    | ChatMsg Chat.Msg
     | SettingsMsg Settings.Msg
 
 type Page
     = ShowCase ShowCase.Model
     | Blog Blog.Model
-    | Chat Chat.Model
     | Settings Settings.Model
     | About
     | NotFound
@@ -69,12 +66,11 @@ view model = let widgets = -- TODO change model.auth.auth to a session structure
                      , pageWidget = case model.page of
                                         ShowCase subModel -> ShowCase.view subModel model.auth |> Html.map ShowCaseMsg
                                         Blog subModel -> Blog.view subModel model.auth |> Html.map BlogMsg
-                                        Chat subModel -> Chat.view subModel model.auth |> Html.map ChatMsg
                                         Settings subModel -> Settings.view subModel model.auth |> Html.map SettingsMsg
                                         About -> Layout.viewAbout model
                                         NotFound -> Layout.viewNotFound model
                      }
-             in Layout.view model.layout widgets
+             in Layout.view LayoutMsg model.layout widgets
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model = let updater wrapModel wrapMsg (subModel, subMsg) = (wrapModel subModel, Cmd.map wrapMsg subMsg)
@@ -100,11 +96,6 @@ update msg model = let updater wrapModel wrapMsg (subModel, subMsg) = (wrapModel
                                Blog subModel -> Blog.update subMsg subModel
                                       |> updater (\newModel -> { model | page = Blog newModel}) BlogMsg
                                _ -> (model, Cmd.none)
-                       ChatMsg subMsg ->
-                           case model.page of
-                               Chat subModel -> Chat.update subMsg subModel
-                                      |> updater (\newModel -> { model | page = Chat newModel}) ChatMsg
-                               _ -> (model, Cmd.none)
                        SettingsMsg subMsg ->
                            case model.page of
                                Settings subModel -> Settings.update subMsg subModel
@@ -118,8 +109,7 @@ router url model = let --session = Session.modelToSession model
                                 [ U.map (ShowCase.init |> \(subModel, subMsg) -> (ShowCase subModel, Cmd.map ShowCaseMsg subMsg)) <| U.top
                                 , U.map (About, Cmd.none) <| U.s "about"
                                 , U.map (Blog.init |> \(subModel, subMsg) -> (Blog subModel, Cmd.map BlogMsg subMsg)) <| U.s "blog"
-                                , U.map (Chat.init |> \(subModel, subMsg) -> (Chat subModel, Cmd.map ChatMsg subMsg)) <| U.s "chat"
-                                , U.map (Settings.init |> \(subModel, subMsg) -> (Settings subModel, Cmd.map SettingsMsg subMsg)) <| U.s "settings"
+                                , U.map (Settings.init model.auth |> \(subModel, subMsg) -> (Settings subModel, Cmd.map SettingsMsg subMsg)) <| U.s "settings"
                                 ]
                        (page, msg) = Maybe.withDefault (NotFound, Cmd.none) <| U.parse parser url
                    in ({model | page = page }, msg)

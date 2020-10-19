@@ -26,7 +26,7 @@ class ShowCase implements JsonSerializable
      */
     protected $url;
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text")
      */
     protected $description;
 

@@ -26,14 +26,11 @@ class Nav implements RequestHandlerInterface
             return new JsonResponse($repo->findAll());
         case "nav.set":
             $pe = $request->getParsedBody();
-            $pe['date'] = new \DateTime();
-            if($item = $repo->findOneBy(['id' => $pe['id']])) {
-                $item->setInfo($pe);
-            } else {
-                $item = new NavPages($pe);
-            }
-            $orm->persist($item);
-            $orm->flush();
+            array_map(function($item) {
+                $item = new NavPages($item);
+                $orm->persist($item);
+                $orm->flush();
+            }, $pe);
             $success = true;
             break;
         case "nav.delete":

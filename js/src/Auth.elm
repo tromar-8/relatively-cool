@@ -54,7 +54,7 @@ update msg model = case msg of
                                                                       _ -> (Guest (LoginForm LoginTab "" "" "" authResponse.error) [], Cmd.none)
                        Login -> case model of
                                     Guest loginForm roles ->
-                                        (model, Http.post
+                                        (Authenticating, Http.post
                                              { body = Http.jsonBody <| E.object
                                                    [ ( "username", E.string loginForm.inputUser )
                                                    , ( "password", E.string loginForm.inputPass )]
@@ -63,12 +63,11 @@ update msg model = case msg of
                                              }
                                         )
                                     _ -> (model, Cmd.none)
-                       Logout -> (model, Cmd.batch
+                       Logout -> (Authenticating, Cmd.batch
                                       [ Http.get
                                             { url = Util.endpoint ++ "logout"
                                             , expect = Http.expectJson WhoAmIResponse decodeAuth
                                             }
-                                      , Nav.load "/"
                                       ]
                                  )
                        Register -> case model of
@@ -113,8 +112,7 @@ navWidget model =
     case model of
         Authenticating -> [ div [class "navbar-item"] [text "Authenticating..."] ]
         Guest form roles ->
-            let ifCheck check true false = if check then true else false
-                (tab, buttonText) = (case form.tab of
+            let (tab, buttonText) = (case form.tab of
                                          LoginTab -> (Login, "Login")
                                          RegisterTab -> (Register, "Register")
                                     )
@@ -124,9 +122,9 @@ navWidget model =
                          [ div [class "navbar-item"]
                                [ div [class "tabs"]
                                      [ ul []
-                                           [ li [ class <| ifCheck (form.tab == LoginTab) "is-active" "" ]
+                                           [ li [ class <| if form.tab == LoginTab then "is-active" else "" ]
                                                  [ a [ href "#", onClick <| SwitchTab LoginTab ] [text "Login"]]
-                                           , li [ class <| ifCheck (form.tab == RegisterTab) "is-active" "" ]
+                                           , li [ class <| if form.tab == RegisterTab then "is-active" else "" ]
                                                [ a [ href "#", onClick <| SwitchTab RegisterTab ] [text "Register"]]
                                            ]
                                      ]
@@ -172,11 +170,10 @@ navWidget model =
                                ]
                          ]
                      ]
-               , div [class "navbar-item"] [text "Welcome, Guest!"]
+               , a [class "navbar-item", href "/settings" ] [ text "⚙️ Settings" ]
                ]
-        User name roles -> [ div [class "navbar-item"] [text <| "Welcome, " ++ name ++ "!"]
-                           , div [class "navbar-item"] [ a [class "button is-dark", href "/settings"] [text "Settings"]]
-                           , div [class "navbar-item"] [button [class "button is-dark", onClick Logout] [text "Logout"]]
+        User name roles -> [ a [class "navbar-item", href "/settings"] [text <| name++" ⚙️"]
+                           , a [class "navbar-item", onClick Logout, href "#"] [text "Logout"]
                            ]
 
 isAdmin model = case model of
